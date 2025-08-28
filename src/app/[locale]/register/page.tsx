@@ -40,7 +40,8 @@ export default function RegisterPage() {
         <Scanner
           onScan={handleScanSuccess}
           onError={handleScanError}
-          constraints={{ facingMode: 'environment' }}
+          sound={true}
+          
         />
       </div>
       {isLoading && <p>Loading...</p>}
