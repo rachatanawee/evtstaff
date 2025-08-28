@@ -1,0 +1,15 @@
+{
+  "Index": {
+    "title": "Hello, World!"
+  },
+  "BottomNav": {
+    "Home": "Home",
+    "Register": "Register",
+    "Prize": "Prize",
+    "Profile": "Profile"
+  },
+  "HomePage": {
+    "title": "Event Staff Page",
+    "description": "This is the staff page for event participant registration and prize redemption."
+  }
+}
