@@ -9,7 +9,7 @@ export interface Prize {
 }
 
 export async function searchEmployeePrize(employeeId: string): Promise<{ prize?: Prize | null; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const { data, error } = await supabase
@@ -31,7 +31,7 @@ export async function searchEmployeePrize(employeeId: string): Promise<{ prize?:
 }
 
 export async function submitPrizeClaim(employeeId: string, prizeId: string, photoBase64: string): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     // Convert base64 to ArrayBuffer
