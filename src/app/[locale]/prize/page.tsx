@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -41,7 +42,7 @@ export default function PrizePage() {
           videoRef.current.srcObject = stream;
           videoRef.current.play();
         }
-      } catch (err) {
+      } catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
         setError('Could not start camera. Please grant permission.');
       }
     }
@@ -124,7 +125,7 @@ export default function PrizePage() {
       {photo && (
           <div className="text-center mb-4">
               <h3 className="text-lg font-semibold mb-2">Confirm Photo</h3>
-              <img src={photo} alt="Prize confirmation" className="rounded-md mb-2 mx-auto" />
+              <Image src={photo} alt="Prize confirmation" width={300} height={200} objectFit="contain" className="rounded-md mb-2 mx-auto" />
               <Button onClick={handleSubmit} disabled={isSubmitting} className="mr-2">
                   {isSubmitting ? 'Submitting...' : 'Submit Claim'}
               </Button>

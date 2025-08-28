@@ -13,7 +13,7 @@ export default function Login() {
   const locale = pathname.split('/')[1];
 
   const handleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })

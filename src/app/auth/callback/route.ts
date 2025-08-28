@@ -1,9 +1,9 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
+
 
 import type { NextRequest } from 'next/server'
-import type { Database } from '@/lib/database.types'
+
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
                 newOptions.expires = newOptions.expires.getTime();
               }
               cookieStore.set({ name, value, ...newOptions });
-            } catch (error) {
+            } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
               // The `cookies().set()` method can only be called in a Server Component or Route Handler
               // that is part of a Next.js App Router route. This error is typically caused by calling
               // `cookies().set()` in a Client Component.
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
                 newOptions.expires = newOptions.expires.getTime();
               }
               cookieStore.set({ name, value: '', ...newOptions });
-            } catch (error) {
+            } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
               // The `cookies().set()` method can only be called in a Server Component or Route Handler
               // that is part of a Next.js App Router route. This error is typically caused by calling
               // `cookies().set()` in a Client Component.

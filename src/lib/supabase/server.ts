@@ -19,7 +19,7 @@ export function createClient() {
         set(name: string, value: string, options: CookieOptions) {
           try {
             (cookies() as unknown as CookieStore).set(name, value, options)
-          } catch (error) {
+          } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
             // The `cookies().set()` method can only be called in a Server Component or Route Handler
             // that is part of a Next.js App Router route. This error is typically caused by calling
             // `cookies().set()` in a Client Component.
@@ -28,7 +28,7 @@ export function createClient() {
         remove(name: string, options: CookieOptions) {
           try {
             (cookies() as unknown as CookieStore).remove(name, options)
-          } catch (error) {
+          } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
             // The `cookies().set()` method can only be called in a Server Component or Route Handler
             // that is part of a Next.js App Router route. This error is typically caused by calling
             // `cookies().set()` in a Client Component.

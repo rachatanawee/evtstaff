@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { User } from '@supabase/supabase-js'
 import LanguageSwitcher from '@/components/language-switcher/language-switcher'; // Import LanguageSwitcher
 
-import { User as UserIcon, Mail, Fingerprint, Clock } from 'lucide-react'; // Import User icon and alias it, plus new icons
+import { Mail, Fingerprint, Clock } from 'lucide-react'; // Import User icon and alias it, plus new icons
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
