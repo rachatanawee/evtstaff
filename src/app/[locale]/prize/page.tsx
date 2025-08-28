@@ -1,16 +1,10 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-interface Prize {
-  id: string;
-  name: string;
-  description: string;
-}
+import { searchEmployeePrize, submitPrizeClaim, Prize } from './actions'
 
 export default function PrizePage() {
   const [employeeId, setEmployeeId] = useState('');
@@ -22,33 +16,20 @@ export default function PrizePage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const supabase = createClient();
-
   const handleSearch = async () => {
     if (!employeeId) return;
     setIsLoading(true);
     setError('');
     setPrize(null);
 
-    try {
-      const { data, error } = await supabase
-        .from('employees')
-        .select(`
-          id,
-          prizes (*)
-        `)
-        .eq('id', employeeId)
-        .single();
+    const { prize: fetchedPrize, error: searchError } = await searchEmployeePrize(employeeId);
 
-      if (error) throw error;
-      if (!data || !data.prizes) throw new Error('No prize found for this employee.');
-
-      setPrize(data.prizes as Prize);
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setIsLoading(false);
+    if (searchError) {
+      setError(searchError);
+    } else if (fetchedPrize) {
+      setPrize(fetchedPrize as Prize);
     }
+    setIsLoading(false);
   };
 
   const startCamera = async () => {
@@ -88,38 +69,17 @@ export default function PrizePage() {
     setIsSubmitting(true);
     setError('');
 
-    try {
-      const response = await fetch(photo);
-      const blob = await response.blob();
-      const fileName = `${employeeId}-${prize.id}-${Date.now()}.jpg`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('prize-confirmations')
-        .upload(fileName, blob, {
-          contentType: 'image/jpeg',
-        });
+    const { success, error: submitError } = await submitPrizeClaim(employeeId, prize.id, photo);
 
-      if (uploadError) throw uploadError;
-
-      const { error: dbError } = await supabase
-        .from('prize_claims')
-        .insert({
-          employee_id: employeeId,
-          prize_id: prize.id,
-          photo_url: uploadData.path,
-        });
-
-      if (dbError) throw dbError;
-
+    if (success) {
       alert('Successfully submitted prize claim!');
       setEmployeeId('');
       setPrize(null);
       setPhoto(null);
-
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      setError(submitError || 'Failed to submit prize claim.');
     }
+    setIsSubmitting(false);
   };
 
   return (

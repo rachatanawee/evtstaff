@@ -2,43 +2,29 @@
 
 import { useState } from 'react'
 import { QrReader } from 'react-qr-reader'
-import { createClient } from '@/lib/supabase/client'
+import { checkInParticipant } from './actions'
 
 export default function RegisterPage() {
   const [data, setData] = useState('No result');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const supabase = createClient();
 
-  const handleScan = async (result: any, error: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleScan = async (result: any, error: Error | null | undefined) => {
     if (!!result) {
       const scannedData = result?.text;
       setData(scannedData);
       setIsLoading(true);
       setError('');
 
-      try {
-        // Assuming the QR code contains the participant's ID
-        const { data: updateData, error: updateError } = await supabase
-          .from('participants')
-          .update({ status: 'checked-in', updated_at: new Date().toISOString() })
-          .eq('id', scannedData)
-          .select();
+      const response = await checkInParticipant(scannedData);
 
-        if (updateError) {
-          throw new Error(`Supabase error: ${updateError.message}`);
-        }
-
-        if (!updateData || updateData.length === 0) {
-          throw new Error('Participant not found.');
-        }
-
-        setData(`Successfully checked-in participant: ${scannedData}`);
-      } catch (e: any) {
-        setError(e.message);
-      } finally {
-        setIsLoading(false);
+      if (response.success) {
+        setData(response.message);
+      } else {
+        setError(response.message);
       }
+      setIsLoading(false);
     }
 
     if (!!error) {
