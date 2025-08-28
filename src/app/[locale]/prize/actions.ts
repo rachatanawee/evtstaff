@@ -169,14 +169,6 @@ export async function submitPrizeClaim(employeeId: string, prizeId: string, phot
 
     return { success: true };
   } catch (e: unknown) {
-    let errorMessage = 'An unknown error occurred.';
-    if (e instanceof Error) {
-      errorMessage = e.message;
-    } else if (typeof e === 'object' && e !== null && 'message' in e && typeof (e as any).message === 'string') {
-      errorMessage = (e as any).message;
-    } else if (typeof e === 'string') {
-      errorMessage = e;
-    }
-    return { success: false, error: errorMessage };
+    return { success: false, error: getErrorMessage(e) };
   }
 }
