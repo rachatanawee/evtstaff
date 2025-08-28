@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { QrReader } from 'react-qr-reader'
+import { Scanner } from '@yudiel/react-qr-scanner'
 import { checkInParticipant } from './actions'
 
 export default function RegisterPage() {
@@ -10,9 +10,9 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleScan = async (result: any, error: Error | null | undefined) => {
-    if (!!result) {
-      const scannedData = result?.text;
+  const handleScanSuccess = async (result: any) => {
+    if (result) {
+      const scannedData = result;
       setData(scannedData);
       setIsLoading(true);
       setError('');
@@ -26,20 +26,21 @@ export default function RegisterPage() {
       }
       setIsLoading(false);
     }
+  }
 
-    if (!!error) {
-      // console.info(error);
-    }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleScanError = (_err: any) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+    // console.info(err);
   }
 
   return (
     <div className="p-4 flex flex-col items-center text-center">
       <h1 className="text-2xl font-bold mb-4">QR Code Scanner</h1>
       <div className="w-full max-w-sm border-2 border-dashed rounded-lg p-2 mb-4">
-        <QrReader
-          onResult={handleScan}
+        <Scanner
+          onScan={handleScanSuccess}
+          onError={handleScanError}
           constraints={{ facingMode: 'environment' }}
-          containerStyle={{ width: '100%' }}
         />
       </div>
       {isLoading && <p>Loading...</p>}
