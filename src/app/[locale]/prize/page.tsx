@@ -1,18 +1,23 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import Image from 'next/image'
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { searchEmployeePrize, submitPrizeClaim, Prize } from './actions'
-import { Trophy } from 'lucide-react'
+import { searchEmployeePrize, submitPrizeClaim, Prize, EmployeeDetails } from './actions'
 import { useTranslations } from 'next-intl'
+import { Button } from "@/components/ui/button"
+
+import { EmployeeSearchForm } from '@/components/prize/employee-search-form'
+import { ErrorDisplay } from '@/components/prize/error-display'
+import { RedeemedPhotoDisplay } from '@/components/prize/redeemed-photo-display'
+import { PrizeDetailsDisplay } from '@/components/prize/prize-details-display'
+import { CameraCapture } from '@/components/prize/camera-capture'
+import { PhotoConfirmation } from '@/components/prize/photo-confirmation'
 
 export default function PrizePage() {
   const t = useTranslations('PrizePage');
   const [employeeId, setEmployeeId] = useState('');
   const [prize, setPrize] = useState<Prize | null>(null);
+  const [employee, setEmployee] = useState<EmployeeDetails | null>(null); // New state for employee details
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,9 +44,10 @@ export default function PrizePage() {
     setIsLoading(true);
     setError('');
     setPrize(null);
+    setEmployee(null); // Clear previous employee details
     setRedeemedPhotoPath(null); // Clear previous photo path
 
-    const { prize: fetchedPrize, error: searchError, redeemedPhotoPath: fetchedRedeemedPhotoPath } = await searchEmployeePrize(employeeId); // Destructure new field
+    const { prize: fetchedPrize, error: searchError, redeemedPhotoPath: fetchedRedeemedPhotoPath, employee: fetchedEmployee } = await searchEmployeePrize(employeeId); // Destructure new field
 
     if (searchError) {
       setError(searchError);
@@ -51,8 +57,9 @@ export default function PrizePage() {
         const fullImageUrl = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${fetchedRedeemedPhotoPath}`;
         setRedeemedPhotoPath(fullImageUrl); // Set full URL
       }
-    } else if (fetchedPrize) {
+    } else if (fetchedPrize && fetchedEmployee) {
       setPrize(fetchedPrize as Prize);
+      setEmployee(fetchedEmployee as EmployeeDetails);
     }
     setIsLoading(false);
   };
@@ -100,6 +107,7 @@ export default function PrizePage() {
       alert(t('submitSuccess'));
       setEmployeeId('');
       setPrize(null);
+      setEmployee(null); // Clear employee details on successful submission
       setPhoto(null);
     } else {
       setError(submitError || t('submitError'));
@@ -110,6 +118,7 @@ export default function PrizePage() {
   const handleReset = () => {
     setEmployeeId('');
     setPrize(null);
+    setEmployee(null); // Clear employee details on reset
     setError('');
     setIsLoading(false);
     setIsSubmitting(false);
@@ -129,117 +138,68 @@ export default function PrizePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-6 rounded-xl shadow-2xl border border-gray-200">
-        <CardHeader className="text-center pb-6">
+        <CardHeader className="text-center pb-2">
           <CardTitle className="text-3xl font-extrabold text-gray-800">{t('title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4 mb-6">
-            <div className="flex flex-col gap-3">
-              <Input
-                ref={inputRef} // Attach ref
-                type="text"
-                placeholder={t('employeeIdPlaceholder')}
-                value={employeeId}
-                onChange={(e) => setEmployeeId(e.target.value)}
-                disabled={isLoading || isSubmitting}
-                className="flex-grow p-6 text-3xl border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-2xl"
+            {!prize && !redeemedPhotoPath && (
+              <EmployeeSearchForm
+                employeeId={employeeId}
+                setEmployeeId={setEmployeeId}
+                handleSearch={handleSearch}
+                isLoading={isLoading}
+                isSubmitting={isSubmitting}
+                inputRef={inputRef}
               />
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleSearch}
-                  disabled={isLoading || !employeeId || isSubmitting}
-                  className="w-full px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                >
-                  {isLoading ? t('searching') : t('search')}
-                </Button>
-                {(prize || error || redeemedPhotoPath) && (
-                  <Button
-                    onClick={handleReset}
-                    variant="outline"
-                    className="px-6 py-3 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                  >
-                    {t('reset')}
-                  </Button>
-                )}
+            )}
+
+            {employee && (
+              <div className="bg-blue-50 border border-blue-200 text-blue-700 p-6 rounded-lg w-full shadow-md text-center">
+                <h2 className="text-2xl font-bold mb-3">{t('employeeDetails')}</h2>
+                <p className="text-gray-700"><strong>{t('fullName')}:</strong> {employee.full_name}</p>
+                {employee.department && <p className="text-gray-700"><strong>{t('department')}:</strong> {employee.department}</p>}
               </div>
-            </div>
+            )}
 
             {error && error !== 'รับของไปแล้ว' && (
-              <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg w-full shadow-md">
-                <p className="font-medium text-center">
-                  {error === 'No prize found for this employee.' ? t('noPrizeFound') : `${t('error')}: ${error}`}
-                </p>
-              </div>
+              <ErrorDisplay error={error} />
             )}
 
             {redeemedPhotoPath && (
-              <div className="bg-blue-50 border border-blue-200 text-blue-700 p-6 rounded-lg w-full shadow-md text-center">
-                <h2 className="text-2xl font-bold mb-3">{t('prizeAlreadyRedeemed')}</h2>
-                <p className="text-gray-700 mb-4">{t('prizeAlreadyRedeemedDescription')}</p>
-                <Image
-                  src={redeemedPhotoPath}
-                  alt={t('redeemedPrizePhotoAlt')}
-                  width={300}
-                  height={200}
-                  objectFit="contain"
-                  className="rounded-md mx-auto border border-gray-300 shadow-sm"
-                />
-              </div>
+              <RedeemedPhotoDisplay redeemedPhotoPath={redeemedPhotoPath} />
             )}
 
             {prize && (
-              <Card className="border-yellow-300 bg-yellow-50 shadow-lg hover:scale-102 transition-transform duration-300 animate-zoom-in">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-xl font-bold text-yellow-800 flex items-center justify-center space-x-2">
-                    <Trophy className="w-6 h-6 text-yellow-600" />
-                    <span>{t('prizeDetails')}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1">
-                  <h2 className="text-3xl font-semibold text-yellow-700">{prize.name}</h2>
-                  <p className="text-gray-700">{prize.description}</p>
-                </CardContent>
-              </Card>
+              <PrizeDetailsDisplay prize={prize} />
             )}
 
             {prize && !photo && (
-              <div className="text-center bg-gray-50 p-4 rounded-lg shadow-inner border border-gray-200">
-                <video ref={videoRef} className="w-full rounded-md mb-4 border border-gray-300" playsInline />
-                <canvas ref={canvasRef} className="hidden" />
-                <div className="flex justify-center gap-3">
-                  <Button
-                    onClick={takePicture}
-                    className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                  >
-                    {t('takePicture')}
-                  </Button>
-                </div>
-              </div>
+              <CameraCapture
+                videoRef={videoRef}
+                canvasRef={canvasRef}
+                takePicture={takePicture}
+              />
             )}
 
             {photo && (
-              <div className="text-center bg-gray-50 p-4 rounded-lg shadow-inner border border-gray-200">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('confirmPhoto')}</h3>
-                <Image src={photo} alt={t('prizeConfirmationAlt')} width={300} height={200} objectFit="contain" className="rounded-md mb-4 mx-auto border border-gray-300 shadow-sm" />
-                <div className="flex justify-center gap-3">
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                  >
-                    {isSubmitting ? t('submitting') : t('submitClaim')}
-                  </Button>
-                  <Button
-                    onClick={() => setPhoto(null)}
-                    variant="outline"
-                    className="px-6 py-3 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                  >
-                    {t('retake')}
-                  </Button>
-                </div>
-              </div>
+              <PhotoConfirmation
+                photo={photo}
+                handleSubmit={handleSubmit}
+                setPhoto={setPhoto}
+                isSubmitting={isSubmitting}
+              />
             )}
           </div>
+          {(prize || error || redeemedPhotoPath) && (
+            <Button
+              onClick={handleReset}
+              variant="outline"
+              className="w-full mt-4 px-6 py-3 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
+            >
+              {t('reset')}
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

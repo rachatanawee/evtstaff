@@ -8,7 +8,11 @@ export interface Prize {
   description: string;
 }
 
-
+export interface EmployeeDetails {
+  employee_id: string;
+  full_name: string;
+  department: string | null;
+}
 
 function isErrorWithMessage(error: unknown): error is { message: string } {
   return (
@@ -18,20 +22,6 @@ function isErrorWithMessage(error: unknown): error is { message: string } {
     typeof (error as { message: unknown }).message === 'string'
   );
 }
-
-
-export interface Prize {
-  id: string;
-  name: string;
-  description: string;
-}
-
-export interface Prize {
-  id: string;
-  name: string;
-  description: string;
-}
-
 
 function toErrorWithMessage(maybeError: unknown): { message: string } {
   if (isErrorWithMessage(maybeError)) return maybeError;
@@ -48,16 +38,7 @@ function getErrorMessage(error: unknown): string {
   return toErrorWithMessage(error).message;
 }
 
-export interface Prize {
-  id: string;
-  name: string;
-  description: string;
-}
-
-export async function searchEmployeePrize(employeeId: string): Promise<{ prize?: Prize | null; error?: string; redeemedPhotoPath?: string }> {
-  // Mock data for employeeId 1001
-  
-
+export async function searchEmployeePrize(employeeId: string): Promise<{ prize?: Prize | null; error?: string; redeemedPhotoPath?: string; employee?: EmployeeDetails }> {
   const supabase = await createClient();
 
   try {
@@ -83,7 +64,22 @@ export async function searchEmployeePrize(employeeId: string): Promise<{ prize?:
       };
     }
 
-    // Step 2: If winner found and not redeemed, fetch prize details
+    // Step 2: Fetch employee details
+    const { data: employeeData, error: employeeError } = await supabase
+      .from('employees')
+      .select('employee_id, full_name, department')
+      .eq('employee_id', employeeId)
+      .single();
+
+    if (employeeError) {
+      throw employeeError;
+    }
+
+    if (!employeeData) {
+      return { error: 'Employee details not found.' };
+    }
+
+    // Step 3: If winner found and not redeemed, fetch prize details
     const { data: prizeDetails, error: prizeError } = await supabase
       .from('prizes')
       .select('id, name')
@@ -98,7 +94,7 @@ export async function searchEmployeePrize(employeeId: string): Promise<{ prize?:
       return { error: 'Prize details not found.' };
     }
 
-    return { prize: prizeDetails as Prize };
+    return { prize: prizeDetails as Prize, employee: employeeData as EmployeeDetails };
   } catch (e: unknown) {
     return { error: getErrorMessage(e) };
   }

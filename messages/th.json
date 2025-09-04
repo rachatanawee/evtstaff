@@ -33,6 +33,9 @@
     "submitClaim": "ยืนยันการรับรางวัล",
     "retake": "ถ่ายใหม่",
     "submitSuccess": "รับรางวัลสำเร็จ!",
-    "submitError": "การยืนยันรับรางวัลล้มเหลว"
+    "submitError": "การยืนยันรับรางวัลล้มเหลว",
+    "employeeDetails": "รายละเอียดพนักงาน",
+    "fullName": "ชื่อ-นามสกุล",
+    "department": "แผนก"
   }
 }

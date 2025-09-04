@@ -15,8 +15,8 @@
     "prizeRedemption": "Prize Redemption"
   },
   "PrizePage": {
-    "title": "Claim Your Prize",
-    "employeeIdPlaceholder": "Enter Employee ID",
+    "title": "Claim Prize",
+    "employeeIdPlaceholder": "Employee ID",
     "searching": "Searching...",
     "search": "Search",
     "reset": "Reset",
@@ -33,6 +33,9 @@
     "submitClaim": "Submit Claim",
     "retake": "Retake",
     "submitSuccess": "Successfully submitted prize claim!",
-    "submitError": "Failed to submit prize claim."
+    "submitError": "Failed to submit prize claim.",
+    "employeeDetails": "Employee Details",
+    "fullName": "Full Name",
+    "department": "Department"
   }
 }
