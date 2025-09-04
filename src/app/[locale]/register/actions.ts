@@ -16,64 +16,77 @@ function getSession() {
 }
 
 export async function checkInParticipant(scannedData: string) {
-  const supabase = await createClient();
-  const session = getSession();
-  const currentTime = new Date().toISOString();
+  const supabase = await createClient()
+  const session = getSession()
+  const currentTime = new Date().toISOString()
 
-  let parsedData: { employee_id: string; full_name?: string; department?: string };
+  let parsedData: {
+    employee_id: string
+    full_name?: string
+    department?: string
+  }
   try {
-    console.log('Scanned Data (before JSON.parse):', scannedData);
-    parsedData = JSON.parse(scannedData);
+    console.log('Scanned Data (before JSON.parse):', scannedData)
+    parsedData = JSON.parse(scannedData)
     if (!parsedData.employee_id) {
-      throw new Error('Scanned data is missing employee_id.');
+      throw new Error('Scanned data is missing employee_id.')
     }
-  } catch (_e) { // eslint-disable-line @typescript-eslint/no-unused-vars
-    return { success: false, message: 'Invalid QR code data format.' };
+  } catch {
+    return { success: false, message: 'Invalid QR code data format.' }
   }
 
   try {
-    // Try to find an existing registration
-    const { data: existingRegistration, error: selectError } = await supabase
-      .from('registrations')
-      .select('employee_id')
-      .eq('employee_id', parsedData.employee_id)
-      .single();
+    // Insert new registration
+    const { error: insertError } = await supabase.from('registrations').insert({
+      employee_id: parsedData.employee_id,
+      registered_at: currentTime,
+      session: session,
+    })
 
-    if (selectError && selectError.code !== 'PGRST116') { // PGRST116 means no rows found
-      throw new Error(`Supabase select error: ${selectError.message}`);
+    if (insertError) {
+      // Check for duplicate key error
+      if (insertError.code === '23505') {
+        // 23505 is the PostgreSQL error code for unique_violation
+        const { data: existingRegistration, error: selectError } =
+          await supabase
+            .from('registrations')
+            .select('registered_at')
+            .eq('employee_id', parsedData.employee_id)
+            .single()
+
+        if (selectError) {
+          // This should not happen if we have a duplicate error, but handle it just in case
+          throw new Error(
+            `Supabase select error after duplicate: ${selectError.message}`,
+          )
+        }
+
+        if (existingRegistration) {
+          const registeredAt = new Date(existingRegistration.registered_at)
+          const time = registeredAt.toLocaleTimeString('th-TH', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          })
+          return { success: false, message: `มี register แล้วเมื่อเวลา ${time}` }
+        }
+      }
+      // For other errors
+      throw new Error(`Supabase insert error: ${insertError.message}`)
     }
 
-    let message = '';
-    if (existingRegistration) {
-      // Update existing registration
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { data: _updatedRegistration, error: updateError } = await supabase
-        .from('registrations')
-        .update({  registered_at: currentTime, session: session })
-        .eq('employee_id', parsedData.employee_id)
-        .select();
-
-      if (updateError) {
-        throw new Error(`Supabase update error: ${updateError.message}`);
-      }
-      message = `Successfully updated registration for employee ID: ${parsedData.employee_id}. Session: ${session}`;
-    } else {
-      // Insert new registration
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { data: _newRegistration, error: insertError } = await supabase
-        .from('registrations')
-        .insert({ employee_id: parsedData.employee_id, registered_at: currentTime, session: session })
-        .select();
-
-      if (insertError) {
-        throw new Error(`Supabase insert error: ${insertError.message}`);
-      }
-      message = `Successfully registered new employee ID: ${parsedData.employee_id}. Session: ${session}`;
+    const message = `Successfully registered new employee ID: ${parsedData.employee_id}. Session: ${session}`
+    return {
+      success: true,
+      message: message,
+      session: session,
+      registeredData: parsedData,
     }
-
-    return { success: true, message: message, session: session, registeredData: parsedData };
   } catch (e: unknown) {
-    return { success: false, message: (e instanceof Error) ? e.message : 'An unknown error occurred.' };
+    return {
+      success: false,
+      message: e instanceof Error ? e.message : 'An unknown error occurred.',
+    }
   }
 }
 

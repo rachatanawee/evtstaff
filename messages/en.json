@@ -10,6 +10,8 @@
   },
   "HomePage": {
     "title": "Event Staff Page",
-    "description": "This is the staff page for event participant registration and prize redemption."
+    "description": "This is the staff page for event participant registration and prize redemption.",
+    "participantRegistration": "Participant Registration",
+    "prizeRedemption": "Prize Redemption"
   }
 }

@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Home, Trophy, Scan } from 'lucide-react'; // Changed Ticket to Home, Gift to Trophy
 
@@ -14,15 +15,14 @@ export default function HomePage() {
         <CardContent>
           <p className="text-lg text-gray-600 mb-4">{t('description')}</p>
           <div className="flex justify-center space-x-4">
-            
-            <div className="flex flex-col items-center">
+            <Link href="/register" className="flex flex-col items-center">
               <Scan className="h-8 w-8 text-green-600" />
-              <span className="text-sm text-gray-500">Participant Registration</span>
-            </div>
-            <div className="flex flex-col items-center">
+              <span className="text-sm text-gray-500">{t('participantRegistration')}</span>
+            </Link>
+            <Link href="/prize" className="flex flex-col items-center">
               <Trophy className="h-8 w-8 text-purple-600" /> {/* Changed to Trophy icon */}
-              <span className="text-sm text-gray-500">Prize Redemption</span>
-            </div>
+              <span className="text-sm text-gray-500">{t('prizeRedemption')}</span>
+            </Link>
           </div>
         </CardContent>
       </Card>

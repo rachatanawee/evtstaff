@@ -126,7 +126,7 @@ export default function PrizePage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4 mb-6">
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3">
               <Input
                 ref={inputRef} // Attach ref
                 type="text"
@@ -136,22 +136,24 @@ export default function PrizePage() {
                 disabled={isLoading || isSubmitting}
                 className="flex-grow p-3 text-lg border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
               />
-              <Button
-                onClick={handleSearch}
-                disabled={isLoading || !employeeId || isSubmitting}
-                className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-              >
-                {isLoading ? 'Searching...' : 'Search'}
-              </Button>
-              {(prize || error || redeemedPhotoPath) && (
+              <div className="flex gap-3">
                 <Button
-                  onClick={handleReset}
-                  variant="outline"
-                  className="px-6 py-3 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
+                  onClick={handleSearch}
+                  disabled={isLoading || !employeeId || isSubmitting}
+                  className="w-full px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
                 >
-                  Reset
+                  {isLoading ? 'Searching...' : 'Search'}
                 </Button>
-              )}
+                {(prize || error || redeemedPhotoPath) && (
+                  <Button
+                    onClick={handleReset}
+                    variant="outline"
+                    className="px-6 py-3 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
             </div>
 
             {error && error !== 'รับของไปแล้ว' && (

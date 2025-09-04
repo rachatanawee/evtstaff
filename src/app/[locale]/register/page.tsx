@@ -101,18 +101,19 @@ export default function RegisterPage() {
         {registeredData && (
           <div className="bg-green-50 border border-green-200 text-green-700 p-6 rounded-lg w-full mb-6 shadow-md">
             <h2 className="text-2xl font-bold text-green-800 mb-3">Registration Successful!</h2>
-            <div className="text-left space-y-2">
+            <div className="text-left space-y-2 mb-4">
               <p><strong>Employee ID:</strong> {registeredData.employee_id}</p>
               <p><strong>Full Name:</strong> {registeredData.full_name}</p>
               <p><strong>Department:</strong> {registeredData.department}</p>
+              {session && <p><strong>Session:</strong> {session}</p>}
             </div>
+            <button
+              onClick={handleScanAgain}
+              className="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
+            >
+              Scan Next
+            </button>
           </div>
-        )}
-
-        {session && (
-          <p className="bg-blue-50 border border-blue-200 text-blue-700 p-3 rounded-lg w-full break-words shadow-sm text-sm">
-            Current Session: <span className="font-semibold">{session}</span>
-          </p>
         )}
       </div>
     </div>
