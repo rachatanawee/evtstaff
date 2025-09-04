@@ -157,8 +157,10 @@ export default function PrizePage() {
             {employee && (
               <div className="bg-blue-50 border border-blue-200 text-blue-700 p-6 rounded-lg w-full shadow-md text-center">
                 <h2 className="text-2xl font-bold mb-3">{t('employeeDetails')}</h2>
-                <p className="text-gray-700"><strong>{t('fullName')}:</strong> {employee.full_name}</p>
-                {employee.department && <p className="text-gray-700"><strong>{t('department')}:</strong> {employee.department}</p>}
+                <p className="text-gray-700">
+                  {employee.employee_id} - {employee.full_name}
+                  {employee.department && ` (${employee.department})`}
+                </p>
               </div>
             )}
 

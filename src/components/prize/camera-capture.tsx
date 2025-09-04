@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl'
 import { RefObject } from 'react'
 
 interface CameraCaptureProps {
-  videoRef: RefObject<HTMLVideoElement>;
-  canvasRef: RefObject<HTMLCanvasElement>;
+  videoRef: RefObject<HTMLVideoElement | null>;
+  canvasRef: RefObject<HTMLCanvasElement | null>;
   takePicture: () => void;
 }
 

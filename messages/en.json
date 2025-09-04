@@ -36,6 +36,7 @@
     "submitError": "Failed to submit prize claim.",
     "employeeDetails": "Employee Details",
     "fullName": "Full Name",
-    "department": "Department"
+    "department": "Department",
+    "employeeId": "Employee ID"
   }
 }

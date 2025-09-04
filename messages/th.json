@@ -36,6 +36,7 @@
     "submitError": "การยืนยันรับรางวัลล้มเหลว",
     "employeeDetails": "รายละเอียดพนักงาน",
     "fullName": "ชื่อ-นามสกุล",
-    "department": "แผนก"
+    "department": "แผนก",
+    "employeeId": "รหัสพนักงาน"
   }
 }

@@ -11,7 +11,7 @@ interface EmployeeSearchFormProps {
   handleSearch: () => void;
   isLoading: boolean;
   isSubmitting: boolean;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
 }
 
 export function EmployeeSearchForm({
