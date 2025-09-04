@@ -7,12 +7,14 @@ import { useRouter, usePathname } from 'next/navigation'
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loginError, setLoginError] = useState<string | null>(null); // New state for login error
   const supabase = createClient()
   const router = useRouter()
   const pathname = usePathname()
   const locale = pathname.split('/')[1];
 
   const handleLogin = async () => {
+    setLoginError(null); // Clear previous errors
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -20,6 +22,7 @@ export default function Login() {
 
     if (error) {
       console.error('Login error:', error.message);
+      setLoginError(error.message); // Set the error message
     } else {
       router.push(`/${locale}/home`);
     }
@@ -59,7 +62,10 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            {loginError && (
+              <p className="text-red-500 text-xs italic mb-4">{loginError}</p>
+            )}
+            <div className="flex items-center justify-center">
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
