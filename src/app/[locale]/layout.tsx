@@ -4,6 +4,7 @@ import "./globals.css";
 import { BottomNav } from "@/components/bottom-nav/bottom-nav";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { PageTransitionWrapper } from "@/components/page-transition-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,9 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <div className="flex flex-col min-h-screen">
             <main className="flex-grow pb-16 max-w-md mx-auto">
-              {children}
+              <PageTransitionWrapper>
+                {children}
+              </PageTransitionWrapper>
             </main>
             <BottomNav />
           </div>

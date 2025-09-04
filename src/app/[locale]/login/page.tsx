@@ -33,7 +33,12 @@ export default function Login() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen relative"> {/* Added relative */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+          <p className="text-gray-800 text-lg">Loading...</p> {/* Simple loading text */}
+        </div>
+      )}
       <main className="flex flex-col items-center justify-center w-full flex-1 text-center">
         <h1 className="text-4xl font-bold">
           Login
@@ -78,13 +83,10 @@ export default function Login() {
                 onClick={handleLogin}
                 disabled={isLoading} // Disable button during loading
               >
-                {isLoading ? 'Logging in...' : 'Sign In'} {/* Change button text based on loading state */}
+                Sign In
               </button>
             </div>
           </form>
-          {isLoading && (
-            <p className="text-gray-600 mt-4">Loading home page...</p>
-          )}
         </div>
       </main>
     </div>

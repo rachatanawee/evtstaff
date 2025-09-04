@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Scanner } from '@yudiel/react-qr-scanner'
 import { checkInParticipant, getInitialSession } from './actions'
 import { QrCode } from 'lucide-react'
+import { LoadingOverlay } from '@/components/loading-overlay'
 
 interface RegisteredData {
   employee_id: string;
@@ -82,10 +83,6 @@ export default function RegisterPage() {
           />
         </div>
 
-        {isLoading && (
-          <p className="text-blue-600 font-semibold text-lg mb-4 animate-pulse">Loading...</p>
-        )}
-
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg w-full mb-6 shadow-md">
             <p className="font-medium mb-3">Error: {error}</p>
@@ -116,6 +113,7 @@ export default function RegisterPage() {
           </div>
         )}
       </div>
+      <LoadingOverlay show={isLoading} message="Processing scan..." />
     </div>
   )
 }
