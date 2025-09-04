@@ -13,5 +13,26 @@
     "description": "This is the staff page for event participant registration and prize redemption.",
     "participantRegistration": "Participant Registration",
     "prizeRedemption": "Prize Redemption"
+  },
+  "PrizePage": {
+    "title": "Claim Your Prize",
+    "employeeIdPlaceholder": "Enter Employee ID",
+    "searching": "Searching...",
+    "search": "Search",
+    "reset": "Reset",
+    "noPrizeFound": "No prize found for this employee.",
+    "error": "Error",
+    "prizeAlreadyRedeemed": "Prize Already Redeemed",
+    "prizeAlreadyRedeemedDescription": "This prize has already been redeemed.",
+    "redeemedPrizePhotoAlt": "Redeemed Prize Photo",
+    "prizeDetails": "Prize Details",
+    "takePicture": "Take Picture",
+    "confirmPhoto": "Confirm Photo",
+    "prizeConfirmationAlt": "Prize confirmation",
+    "submitting": "Submitting...",
+    "submitClaim": "Submit Claim",
+    "retake": "Retake",
+    "submitSuccess": "Successfully submitted prize claim!",
+    "submitError": "Failed to submit prize claim."
   }
 }

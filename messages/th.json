@@ -13,5 +13,26 @@
     "description": "หน้านี้เป็นหน้าสำหรับเจ้าหน้าที่จัดงาน เพื่อลงทะเบียนผู้ร่วมงานและแจ้งรับรางวัล",
     "participantRegistration": "ลงทะเบียนผู้ร่วมงาน",
     "prizeRedemption": "แจ้งรับรางวัล"
+  },
+  "PrizePage": {
+    "title": "รับของรางวัล",
+    "employeeIdPlaceholder": "กรอกรหัสพนักงาน",
+    "searching": "กำลังค้นหา...",
+    "search": "ค้นหา",
+    "reset": "รีเซ็ต",
+    "noPrizeFound": "ไม่พบข้อมูลรางวัลสำหรับพนักงานนี้",
+    "error": "ข้อผิดพลาด",
+    "prizeAlreadyRedeemed": "รับของรางวัลไปแล้ว",
+    "prizeAlreadyRedeemedDescription": "รางวัลนี้ถูกรับไปแล้ว",
+    "redeemedPrizePhotoAlt": "รูปถ่ายการรับรางวัล",
+    "prizeDetails": "รายละเอียดรางวัล",
+    "takePicture": "ถ่ายรูป",
+    "confirmPhoto": "ยืนยันรูปถ่าย",
+    "prizeConfirmationAlt": "ยืนยันการรับรางวัล",
+    "submitting": "กำลังส่ง...",
+    "submitClaim": "ยืนยันการรับรางวัล",
+    "retake": "ถ่ายใหม่",
+    "submitSuccess": "รับรางวัลสำเร็จ!",
+    "submitError": "การยืนยันรับรางวัลล้มเหลว"
   }
 }

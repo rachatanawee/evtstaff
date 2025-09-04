@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { searchEmployeePrize, submitPrizeClaim, Prize } from './actions'
 import { Trophy } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function PrizePage() {
+  const t = useTranslations('PrizePage');
   const [employeeId, setEmployeeId] = useState('');
   const [prize, setPrize] = useState<Prize | null>(null);
   const [error, setError] = useState('');
@@ -25,6 +27,12 @@ export default function PrizePage() {
       inputRef.current.focus();
     }
   }, []);
+
+  useEffect(() => {
+    if (prize && !photo) {
+      startCamera();
+    }
+  }, [prize, photo]);
 
   const handleSearch = async () => {
     if (!employeeId) return;
@@ -53,7 +61,7 @@ export default function PrizePage() {
     setPhoto(null);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           videoRef.current.play();
@@ -89,12 +97,12 @@ export default function PrizePage() {
     const { success, error: submitError } = await submitPrizeClaim(employeeId, prize.id, photo);
 
     if (success) {
-      alert('Successfully submitted prize claim!');
+      alert(t('submitSuccess'));
       setEmployeeId('');
       setPrize(null);
       setPhoto(null);
     } else {
-      setError(submitError || 'Failed to submit prize claim.');
+      setError(submitError || t('submitError'));
     }
     setIsSubmitting(false);
   };
@@ -122,7 +130,7 @@ export default function PrizePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-6 rounded-xl shadow-2xl border border-gray-200">
         <CardHeader className="text-center pb-6">
-          <CardTitle className="text-3xl font-extrabold text-gray-800">Claim Your Prize</CardTitle>
+          <CardTitle className="text-3xl font-extrabold text-gray-800">{t('title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4 mb-6">
@@ -130,11 +138,11 @@ export default function PrizePage() {
               <Input
                 ref={inputRef} // Attach ref
                 type="text"
-                placeholder="Enter Employee ID"
+                placeholder={t('employeeIdPlaceholder')}
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
                 disabled={isLoading || isSubmitting}
-                className="flex-grow p-3 text-lg border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                className="flex-grow p-6 text-3xl border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 placeholder:text-2xl"
               />
               <div className="flex gap-3">
                 <Button
@@ -142,7 +150,7 @@ export default function PrizePage() {
                   disabled={isLoading || !employeeId || isSubmitting}
                   className="w-full px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
                 >
-                  {isLoading ? 'Searching...' : 'Search'}
+                  {isLoading ? t('searching') : t('search')}
                 </Button>
                 {(prize || error || redeemedPhotoPath) && (
                   <Button
@@ -150,7 +158,7 @@ export default function PrizePage() {
                     variant="outline"
                     className="px-6 py-3 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
                   >
-                    Reset
+                    {t('reset')}
                   </Button>
                 )}
               </div>
@@ -159,18 +167,18 @@ export default function PrizePage() {
             {error && error !== 'รับของไปแล้ว' && (
               <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg w-full shadow-md">
                 <p className="font-medium text-center">
-                  {error === 'No prize found for this employee.' ? 'ไม่พบข้อมูลได้รางวัล' : `Error: ${error}`}
+                  {error === 'No prize found for this employee.' ? t('noPrizeFound') : `${t('error')}: ${error}`}
                 </p>
               </div>
             )}
 
             {redeemedPhotoPath && (
               <div className="bg-blue-50 border border-blue-200 text-blue-700 p-6 rounded-lg w-full shadow-md text-center">
-                <h2 className="text-2xl font-bold mb-3">รับของไปแล้ว</h2>
-                <p className="text-gray-700 mb-4">This prize has already been redeemed.</p>
+                <h2 className="text-2xl font-bold mb-3">{t('prizeAlreadyRedeemed')}</h2>
+                <p className="text-gray-700 mb-4">{t('prizeAlreadyRedeemedDescription')}</p>
                 <Image
                   src={redeemedPhotoPath}
-                  alt="Redeemed Prize Photo"
+                  alt={t('redeemedPrizePhotoAlt')}
                   width={300}
                   height={200}
                   objectFit="contain"
@@ -184,11 +192,11 @@ export default function PrizePage() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-xl font-bold text-yellow-800 flex items-center justify-center space-x-2">
                     <Trophy className="w-6 h-6 text-yellow-600" />
-                    <span>Prize Details</span>
+                    <span>{t('prizeDetails')}</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <h2 className="text-2xl font-semibold text-yellow-700">{prize.name}</h2>
+                <CardContent className="space-y-1">
+                  <h2 className="text-3xl font-semibold text-yellow-700">{prize.name}</h2>
                   <p className="text-gray-700">{prize.description}</p>
                 </CardContent>
               </Card>
@@ -200,16 +208,10 @@ export default function PrizePage() {
                 <canvas ref={canvasRef} className="hidden" />
                 <div className="flex justify-center gap-3">
                   <Button
-                    onClick={startCamera}
-                    className="px-6 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-                  >
-                    Start Camera
-                  </Button>
-                  <Button
                     onClick={takePicture}
                     className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
                   >
-                    Take Picture
+                    {t('takePicture')}
                   </Button>
                 </div>
               </div>
@@ -217,22 +219,22 @@ export default function PrizePage() {
 
             {photo && (
               <div className="text-center bg-gray-50 p-4 rounded-lg shadow-inner border border-gray-200">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Confirm Photo</h3>
-                <Image src={photo} alt="Prize confirmation" width={300} height={200} objectFit="contain" className="rounded-md mb-4 mx-auto border border-gray-300 shadow-sm" />
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('confirmPhoto')}</h3>
+                <Image src={photo} alt={t('prizeConfirmationAlt')} width={300} height={200} objectFit="contain" className="rounded-md mb-4 mx-auto border border-gray-300 shadow-sm" />
                 <div className="flex justify-center gap-3">
                   <Button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                     className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
                   >
-                    {isSubmitting ? 'Submitting...' : 'Submit Claim'}
+                    {isSubmitting ? t('submitting') : t('submitClaim')}
                   </Button>
                   <Button
                     onClick={() => setPhoto(null)}
                     variant="outline"
                     className="px-6 py-3 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-100 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
                   >
-                    Retake
+                    {t('retake')}
                   </Button>
                 </div>
               </div>
