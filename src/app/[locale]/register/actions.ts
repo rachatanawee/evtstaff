@@ -45,14 +45,21 @@ export async function checkInParticipant(scannedData: string) {
 
     if (insertError) {
       // Check for duplicate key error
-      if (insertError.code === '23505') {
+      if (insertError.code === '23505' || insertError.code === '42501') {
         // 23505 is the PostgreSQL error code for unique_violation
+        console.log('Duplicate error detected. Attempting to fetch existing registration.');
+        console.log('Employee ID:', parsedData.employee_id);
+        console.log('Session:', session);
+
         const { data: existingRegistration, error: selectError } =
           await supabase
             .from('registrations')
             .select('registered_at')
             .eq('employee_id', parsedData.employee_id)
-            .single()
+            .eq('session', session)
+
+        console.log('Select data:', existingRegistration);
+        console.log('Select error:', selectError);
 
         if (selectError) {
           // This should not happen if we have a duplicate error, but handle it just in case
@@ -61,18 +68,22 @@ export async function checkInParticipant(scannedData: string) {
           )
         }
 
-        if (existingRegistration) {
-          const registeredAt = new Date(existingRegistration.registered_at)
+        if (existingRegistration && existingRegistration.length > 0) {
+          const registeredAt = new Date(existingRegistration[0].registered_at)
           const time = registeredAt.toLocaleTimeString('th-TH', {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
           })
           return { success: false, message: `มี register แล้วเมื่อเวลา ${time}` }
+        } else {
+          // This case means a duplicate error occurred, but select returned no data.
+          // This could indicate an RLS issue or a race condition.
+          return { success: false, message: 'Registration failed due to an unexpected duplicate entry or permission issue.' };
         }
       }
       // For other errors
-      throw new Error(`Supabase insert error: ${insertError.message}`)
+      throw new Error(`Supabase insert error: ${insertError.code}:${insertError.message}`)
     }
 
     const message = `Successfully registered new employee ID: ${parsedData.employee_id}. Session: ${session}`

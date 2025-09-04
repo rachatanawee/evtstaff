@@ -8,6 +8,7 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState<string | null>(null); // New state for login error
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
   const supabase = createClient()
   const router = useRouter()
   const pathname = usePathname()
@@ -15,6 +16,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     setLoginError(null); // Clear previous errors
+    setIsLoading(true); // Set loading to true
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -23,14 +25,16 @@ export default function Login() {
     if (error) {
       console.error('Login error:', error.message);
       setLoginError(error.message); // Set the error message
+      setIsLoading(false); // Set loading to false on error
     } else {
       router.push(`/${locale}/home`);
+      // Loading will remain true until the new page loads
     }
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <main className="flex flex-col items-center justify-center w-full flex-1 text-center">
         <h1 className="text-4xl font-bold">
           Login
         </h1>
@@ -41,12 +45,13 @@ export default function Login() {
                 Email
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-3 px-4 text-lg text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="email"
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading} // Disable input during loading
               />
             </div>
             <div className="mb-6">
@@ -54,12 +59,13 @@ export default function Login() {
                 Password
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-3 px-4 text-lg text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                 id="password"
                 type="password"
                 placeholder="******************"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading} // Disable input during loading
               />
             </div>
             {loginError && (
@@ -67,14 +73,18 @@ export default function Login() {
             )}
             <div className="flex items-center justify-center">
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 text-lg rounded focus:outline-none focus:shadow-outline"
                 type="button"
                 onClick={handleLogin}
+                disabled={isLoading} // Disable button during loading
               >
-                Sign In
+                {isLoading ? 'Logging in...' : 'Sign In'} {/* Change button text based on loading state */}
               </button>
             </div>
           </form>
+          {isLoading && (
+            <p className="text-gray-600 mt-4">Loading home page...</p>
+          )}
         </div>
       </main>
     </div>
