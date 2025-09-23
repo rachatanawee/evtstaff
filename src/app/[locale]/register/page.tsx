@@ -21,6 +21,7 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<string | null>(null);
+  const [isScanning, setIsScanning] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -33,11 +34,15 @@ export default function RegisterPage() {
   }, []);
 
   const handleScanAgain = () => {
-    window.location.reload();
+    setRegisteredData(null);
+    setError('');
+    setIsLoading(false);
+    setIsScanning(true);
   }
 
   const handleScanSuccess = async (result: ScanResult[]) => {
-    if (result && result.length > 0) {
+    if (result && result.length > 0 && isScanning) {
+      setIsScanning(false);
       console.log('Full result object:', result);
       const scannedData = result[0].rawValue;
       setRegisteredData(null);
@@ -76,11 +81,11 @@ export default function RegisterPage() {
         </h1>
 
         <div className="w-full max-w-xs bg-gray-50 border border-gray-300 rounded-lg overflow-hidden shadow-inner mb-6 aspect-square flex items-center justify-center">
-          <Scanner
+          {isScanning && <Scanner
             onScan={handleScanSuccess}
             onError={handleScanError}
             sound={true}
-          />
+          />}
         </div>
 
         {error && (
