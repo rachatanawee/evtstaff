@@ -192,6 +192,7 @@ export default function PrizePage() {
                 videoRef={videoRef}
                 canvasRef={canvasRef}
                 takePicture={takePicture}
+                switchCamera={switchCamera}
               />
             )}
 
