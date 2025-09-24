@@ -8,12 +8,14 @@ interface CameraCaptureProps {
   videoRef: RefObject<HTMLVideoElement | null>;
   canvasRef: RefObject<HTMLCanvasElement | null>;
   takePicture: () => void;
+  switchCamera: () => void;
 }
 
 export function CameraCapture({
   videoRef,
   canvasRef,
   takePicture,
+  switchCamera,
 }: CameraCaptureProps) {
   const t = useTranslations('PrizePage');
 
@@ -27,6 +29,12 @@ export function CameraCapture({
           className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
         >
           {t('takePicture')}
+        </Button>
+        <Button
+          onClick={switchCamera}
+          className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
+        >
+          {t('switchCamera')}
         </Button>
       </div>
     </div>

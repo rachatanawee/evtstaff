@@ -23,6 +23,7 @@ export default function PrizePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
   const [redeemedPhotoPath, setRedeemedPhotoPath] = useState<string | null>(null); // New state
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const inputRef = useRef<HTMLInputElement>(null); // New ref for input
@@ -33,11 +34,36 @@ export default function PrizePage() {
     }
   }, []);
 
+  const startCamera = async (mode: 'user' | 'environment') => {
+    setPhoto(null);
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // Stop any existing stream
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+        }
+      } catch (e) {
+        setError('Could not start camera. Please grant permission.');
+      }
+    }
+  };
+
   useEffect(() => {
     if (prize && !photo) {
-      startCamera();
+      startCamera(facingMode);
     }
-  }, [prize, photo]);
+  }, [prize, photo, facingMode]);
+
+  const switchCamera = () => {
+    setFacingMode(prevMode => (prevMode === 'user' ? 'environment' : 'user'));
+  };
 
   const handleSearch = async () => {
     if (!employeeId) return;
@@ -62,21 +88,6 @@ export default function PrizePage() {
       setEmployee(fetchedEmployee as EmployeeDetails);
     }
     setIsLoading(false);
-  };
-
-  const startCamera = async () => {
-    setPhoto(null);
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play();
-        }
-      } catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
-        setError('Could not start camera. Please grant permission.');
-      }
-    }
   };
 
   const takePicture = () => {

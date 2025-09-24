@@ -37,6 +37,7 @@
     "employeeDetails": "รายละเอียดพนักงาน",
     "fullName": "ชื่อ-นามสกุล",
     "department": "แผนก",
-    "employeeId": "รหัสพนักงาน"
+    "employeeId": "รหัสพนักงาน",
+    "switchCamera": "สลับกล้อง"
   }
 }

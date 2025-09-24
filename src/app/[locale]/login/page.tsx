@@ -28,6 +28,7 @@ export default function Login() {
       setIsLoading(false); // Set loading to false on error
     } else {
       router.push(`/${locale}/home`);
+      router.refresh();
       // Loading will remain true until the new page loads
     }
   }

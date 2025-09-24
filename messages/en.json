@@ -37,6 +37,7 @@
     "employeeDetails": "Employee Details",
     "fullName": "Full Name",
     "department": "Department",
-    "employeeId": "Employee ID"
+    "employeeId": "Employee ID",
+    "switchCamera": "Switch Camera"
   }
 }
