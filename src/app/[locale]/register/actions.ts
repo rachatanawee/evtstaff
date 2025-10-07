@@ -78,9 +78,10 @@ export async function checkInParticipant(scannedData: string) {
           })
             */
           
-          const hours = registeredAt.getHours();
-          const minutes = registeredAt.getMinutes();
-          const seconds = registeredAt.getSeconds();
+          const hours = String(registeredAt.getHours()+7).padStart(2, '0');
+          const minutes = String(registeredAt.getMinutes()).padStart(2, '0');
+          const seconds = String(registeredAt.getSeconds()).padStart(2, '0');
+
 
           const time = `${hours}:${minutes}:${seconds}`;
           return { success: false, message: `มี register แล้วเมื่อเวลา ${time}` }
