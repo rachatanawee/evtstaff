@@ -4,11 +4,11 @@ import { createClient } from '@/lib/supabase/server'
 
 function getSession() {
   const now = new Date();
-  const hour = now.getHours();
+  const hour = now.getHours()+7;
 
   if (hour >= 6 && hour <= 14) {
     return 'Day';
-  } else if (hour > 16 && hour <= 23) {
+  } else if (hour > 14 && hour <= 23) {
     return 'Night';
   } else {
     return 'Night'; // Default to Night for hours outside 06:00-20:00
