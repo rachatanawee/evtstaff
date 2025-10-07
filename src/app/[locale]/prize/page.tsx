@@ -59,6 +59,14 @@ export default function PrizePage() {
     if (prize && !photo) {
       startCamera(facingMode);
     }
+
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      }
+    };
   }, [prize, photo, facingMode]);
 
   const switchCamera = () => {
@@ -147,7 +155,7 @@ export default function PrizePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-6 rounded-xl shadow-2xl border border-gray-200">
         <CardHeader className="text-center pb-2">
           <CardTitle className="text-3xl font-extrabold text-gray-800">{t('title')}</CardTitle>

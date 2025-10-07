@@ -73,7 +73,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md flex flex-col items-center text-center border border-gray-200">
         <h1 className="text-3xl font-extrabold text-gray-800 mb-6 flex items-center justify-center space-x-3">
           <QrCode className="w-8 h-8 text-blue-600" />

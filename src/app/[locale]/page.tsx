@@ -6,7 +6,7 @@ import { Home, Trophy, Scan } from 'lucide-react'; // Changed Ticket to Home, Gi
 export default function HomePage() {
   const t = useTranslations('HomePage');
   return (
-    <div className="p-4 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
+    <div className="p-4 min-h-screen flex flex-col items-center justify-center">
       <Card className="w-full max-w-md p-6 shadow-lg rounded-lg text-center">
         <CardHeader className="flex flex-col items-center mb-4">
           <Home className="h-12 w-12 text-blue-600 mb-2" /> {/* Changed to Home icon */}

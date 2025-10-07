@@ -39,7 +39,7 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-        <div className="p-4 text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100"> {/* Added background */}
+        <div className="p-4 text-center min-h-screen flex flex-col items-center justify-center"> {/* Added background */}
             <Card className="w-full max-w-md p-6 shadow-lg rounded-lg text-center"> {/* Added Card styling */}
                 <p className="text-lg text-gray-600 mb-4">You are not logged in.</p>
                 <Button onClick={() => router.push('/')} className="mt-2">Go to Login</Button>

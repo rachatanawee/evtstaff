@@ -6,7 +6,12 @@ const withIntl = withNextIntl('./src/i18n.ts');
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ['omlqrcqaszytiscjacai.supabase.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'omlqrcqaszytiscjacai.supabase.co',
+      },
+    ],
   },
 };
 
