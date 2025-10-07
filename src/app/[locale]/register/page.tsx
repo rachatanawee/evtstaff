@@ -33,6 +33,15 @@ export default function RegisterPage() {
     fetchSession();
   }, []);
 
+  useEffect(() => {
+    // On mount, ensure scanning is active.
+    setIsScanning(true);
+    // On unmount, disable scanning to stop the camera.
+    return () => {
+      setIsScanning(false);
+    };
+  }, []);
+
   const handleScanAgain = () => {
     setRegisteredData(null);
     setError('');

@@ -155,7 +155,7 @@ export default function PrizePage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-start justify-center p-4 pt-20">
       <Card className="w-full max-w-md p-6 rounded-xl shadow-2xl border border-gray-200">
         <CardHeader className="text-center pb-2">
           <CardTitle className="text-3xl font-extrabold text-gray-800">{t('title')}</CardTitle>

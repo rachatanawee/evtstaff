@@ -6,7 +6,7 @@ function getSession() {
   const now = new Date();
   const hour = now.getHours();
 
-  if (hour >= 6 && hour <= 16) {
+  if (hour >= 6 && hour <= 14) {
     return 'Day';
   } else if (hour > 16 && hour <= 23) {
     return 'Night';
@@ -70,11 +70,19 @@ export async function checkInParticipant(scannedData: string) {
 
         if (existingRegistration && existingRegistration.length > 0) {
           const registeredAt = new Date(existingRegistration[0].registered_at)
+          /*
           const time = registeredAt.toLocaleTimeString('th-TH', {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
           })
+            */
+          
+          const hours = registeredAt.getHours();
+          const minutes = registeredAt.getMinutes();
+          const seconds = registeredAt.getSeconds();
+
+          const time = `${hours}:${minutes}:${seconds}`;
           return { success: false, message: `มี register แล้วเมื่อเวลา ${time}` }
         } else {
           // This case means a duplicate error occurred, but select returned no data.
