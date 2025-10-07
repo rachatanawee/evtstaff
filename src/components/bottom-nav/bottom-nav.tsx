@@ -11,7 +11,7 @@ export function BottomNav() {
   const t = useTranslations('BottomNav');
 
   const navItems = [
-    { href: `/${locale}/home`, icon: Home, labelKey: 'Home', color: 'text-red-500' },
+    { href: `/${locale}/home`, icon: Home, labelKey: 'Home', color: 'text-blue-500' },
     { href: `/${locale}/register`, icon: Scan, labelKey: 'Register', color: 'text-green-500' }, // Swapped back
     { href: `/${locale}/prize`, icon: Trophy, labelKey: 'Prize', color: 'text-yellow-500' }, // Swapped back
     { href: `/${locale}/profile`, icon: User, labelKey: 'Profile', color: 'text-purple-500' },

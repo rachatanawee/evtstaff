@@ -8,7 +8,7 @@ function getSession() {
 
   if (hour >= 6 && hour <= 16) {
     return 'Day';
-  } else if (hour > 16 && hour <= 20) {
+  } else if (hour > 16 && hour <= 23) {
     return 'Night';
   } else {
     return 'Night'; // Default to Night for hours outside 06:00-20:00

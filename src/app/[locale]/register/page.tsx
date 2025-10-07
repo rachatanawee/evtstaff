@@ -73,11 +73,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-start justify-center p-4 pt-20">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md flex flex-col items-center text-center border border-gray-200">
         <h1 className="text-3xl font-extrabold text-gray-800 mb-6 flex items-center justify-center space-x-3">
           <QrCode className="w-8 h-8 text-blue-600" />
-          <span>Scan QR Code เพื่อลงทะเบียนงาน <span className="font-normal">{session}</span></span>
+          <span>Scan QR Code เพื่อลงทะเบียนงาน <span className="font-normal">{session}</span>
+          </span>
         </h1>
 
         <div className="w-full max-w-xs bg-gray-50 border border-gray-300 rounded-lg overflow-hidden shadow-inner mb-6 aspect-square flex items-center justify-center">

@@ -44,7 +44,7 @@ export default async function RootLayout({
               <div className="flex items-center justify-center max-w-md mx-auto">
                 <Image src="/HOYA_LENS.png" alt="HOYA LENS" width={80} height={40} className="h-10 w-auto mr-4" />
                 <h1 className="text-sm font-bold text-gray-800 text-center">
-                  HOYA LENS THAILAND LTD. <br /> 51st Years Anniversary
+                  HOYA LENS THAILAND LTD. <br /> 51<sup>st</sup> Years Anniversary
                 </h1>
               </div>
             </header>
