@@ -91,11 +91,15 @@ export default function RegisterPage() {
         </h1>
 
         <div className="w-full max-w-xs bg-gray-50 border border-gray-300 rounded-lg overflow-hidden shadow-inner mb-6 aspect-square flex items-center justify-center">
-          {isScanning && <Scanner
-            onScan={handleScanSuccess}
-            onError={handleScanError}
-            sound={true}
-          />}
+          {isScanning ? (
+            <Scanner
+              onScan={handleScanSuccess}
+              onError={handleScanError}
+              sound={true}
+            />
+          ) : (
+            <img src="/hoya-logo-o.png" alt="Hoya Logo" className="w-48 h-48" />
+          )}
         </div>
 
         {error && (
