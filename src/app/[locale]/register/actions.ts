@@ -7,11 +7,11 @@ function getSession() {
   const hour = now.getHours()+7;
 
   if (hour >= 6 && hour <= 14) {
-    return 'Day';
+    return 'day';
   } else if (hour > 14 && hour <= 23) {
-    return 'Night';
+    return 'night';
   } else {
-    return 'Night'; // Default to Night for hours outside 06:00-20:00
+    return 'night'; // Default to Night for hours outside 06:00-20:00
   }
 }
 
