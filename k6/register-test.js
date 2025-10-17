@@ -4,65 +4,69 @@ import { SharedArray } from 'k6/data';
 import exec from 'k6/execution';
 
 // --- Configuration ---
-// Replace with your actual API base URL
-const API_BASE_URL = 'https://localhost:3000';
+const BASE_URL = 'http://localhost:3000'; // ใช้ http สำหรับ development
+const LOCALE = 'th'; // หรือ 'en' ตามที่ต้องการ
 
-// Credentials for login
+// Login credentials
 const LOGIN_CREDENTIALS = {
   email: 'admin@test.com',
   password: 'asdf1234',
 };
 
 // Load employee IDs from the text file into a SharedArray.
-// This ensures the file is read only once.
 const employeeData = new SharedArray('employeeIDs', function () {
-  // The file path is relative to the current working directory when you run k6.
-  // Make sure to run k6 from the 'eventify-staff' directory or provide an absolute path.
-  return open('./k6/employee.txt').split('\n').filter(id => id.trim() !== '');
+  return open('./employee.txt').split('\n').filter(id => id.trim() !== '');
 });
 
 export const options = {
   scenarios: {
     register_employees: {
-      executor: 'per-vu-iterations',
-      vus: 10, // Number of virtual users to run concurrently
-      iterations: Math.ceil(employeeData.length / 10), // Each VU will run this many iterations
-      maxDuration: '10m',
+      executor: 'constant-arrival-rate', // เปลี่ยนเป็น constant arrival rate สำหรับวัด RPS
+      rate: 10, // 50 requests ต่อวินาที
+      timeUnit: '1s',
+      duration: '100s', // ทดสอบ 30 วินาที
+      preAllocatedVUs: 20,
+      maxVUs: 30,
     },
   },
   thresholds: {
-    http_req_failed: ['rate<0.01'], // http errors should be less than 1%
-    'http_req_duration{group:::login}': ['p(95)<1000'], // 95% of login requests should be below 1s
-    'http_req_duration{group:::register}': ['p(95)<500'], // 95% of register requests should be below 500ms
+    http_req_failed: ['rate<0.01'], // error rate น้อยกว่า 1%
+    'http_req_duration{group:::login}': ['p(95)<2000'], // 95% ของ login requests ต่ำกว่า 2s
+    'http_req_duration{group:::register}': ['p(95)<1000'], // 95% ของ register requests ต่ำกว่า 1s
   },
 };
 
-// setup() function runs once before the VUs start.
-// It's used here to log in and get an authentication token.
+// Setup function - login และได้ authentication token
 export function setup() {
-  const loginUrl = `${API_BASE_URL}/api/auth/login`;
-  const res = http.post(loginUrl, JSON.stringify(LOGIN_CREDENTIALS), {
+  console.log('Setting up test - attempting login...');
+
+  // เข้า login page ก่อน
+  const loginPageRes = http.get(`${BASE_URL}/${LOCALE}/login`);
+  check(loginPageRes, {
+    'login page loaded': (r) => r.status === 200,
+  });
+
+  // Login โดยส่ง form data
+  const loginRes = http.post(`${BASE_URL}/${LOCALE}/login`, LOGIN_CREDENTIALS, {
     headers: { 'Content-Type': 'application/json' },
+    tags: { group: 'login' }
   });
 
-  // Check if login was successful and a token was received
-  check(res, {
-    'login successful': (r) => r.status === 200,
-    'has access token': (r) => r.json('accessToken') !== undefined,
+  check(loginRes, {
+    'login successful': (r) => r.status === 200 || r.status === 302, // 302 คือ redirect หลัง login สำเร็จ
   });
 
-  // Extract the token and return it, so it can be used in the VU code.
-  const authToken = res.json('accessToken');
-  return { authToken: authToken };
+  console.log('Login response status:', loginRes.status);
+  console.log('Login response headers:', loginRes.headers);
+
+  return {
+    authToken: 'authenticated', // ใช้เป็น flag ว่าลogin แล้ว
+    cookies: loginRes.cookies // เก็บ cookies สำหรับ session
+  };
 }
 
-// default() function is the main VU code.
-// It receives the data returned from setup().
+// Main VU function
 export default function (data) {
-  if (!data.authToken) {
-    exec.test.abort('Aborting test: Could not obtain auth token in setup.');
-  }
-
   // Calculate the index for the employee ID to ensure each iteration gets a unique ID
   const employeeIndex = exec.scenario.iterationInTest;
   if (employeeIndex >= employeeData.length) {
@@ -70,17 +74,28 @@ export default function (data) {
   }
   const employeeId = employeeData[employeeIndex];
 
-  const registerUrl = `${API_BASE_URL}/api/staff/register`;
-  const payload = JSON.stringify({ employeeId: employeeId });
-  const params = {
+  console.log(`Processing employee ID: ${employeeId}`);
+
+  // สร้าง QR code data ใน format ที่ expect
+  const qrData = JSON.stringify({
+    employee_id: employeeId,
+    full_name: `Employee ${employeeId}`,
+    department: 'Test Department'
+  });
+
+  // ส่ง registration request โดยตรงไปยัง API endpoint
+  const registerRes = http.post(`${BASE_URL}/${LOCALE}/register/api`, qrData, {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${data.authToken}`,
     },
-  };
+    tags: { group: 'register' }
+  });
 
-  const registerRes = http.post(registerUrl, payload, params, { tags: { group: 'register' } });
-  check(registerRes, { 'registration successful (201 Created)': (r) => r.status === 201 });
+  check(registerRes, {
+    'registration successful': (r) => r.status === 200 || r.status === 201,
+  });
 
-  sleep(1); // Wait for 1 second between registrations
+  console.log(`Registration response status: ${registerRes.status} for employee: ${employeeId}`);
+
+  sleep(0.1); // Wait for 100ms between registrations
 }

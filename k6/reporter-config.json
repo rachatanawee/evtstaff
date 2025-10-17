@@ -1,0 +1,45 @@
+{
+  "title": "Eventify Staff Registration Performance Test",
+  "description": "Performance test results for employee registration system",
+  "output": "k6/report.html",
+  "summary": {
+    "enable": true,
+    "comment": "สรุปผลการทดสอบประสิทธิภาพระบบลงทะเบียนพนักงาน",
+    "failedTests": true,
+    "showMetrics": true
+  },
+  "metrics": {
+    "http_req_duration": {
+      "name": "Response Time",
+      "description": "เวลาตอบสนองของ HTTP requests"
+    },
+    "http_req_failed": {
+      "name": "Error Rate",
+      "description": "อัตราการเกิดข้อผิดพลาด"
+    },
+    "http_reqs": {
+      "name": "Requests per Second",
+      "description": "จำนวน requests ที่ส่งต่อวินาที"
+    }
+  },
+  "charts": {
+    "responseTime": {
+      "title": "Response Time Distribution",
+      "description": "การกระจายของเวลาตอบสนอง",
+      "metric": "http_req_duration",
+      "type": "line"
+    },
+    "requestsPerSecond": {
+      "title": "Requests per Second",
+      "description": "จำนวน requests ต่อวินาที",
+      "metric": "http_reqs",
+      "type": "line"
+    },
+    "errorRate": {
+      "title": "Error Rate",
+      "description": "อัตราการเกิดข้อผิดพลาด",
+      "metric": "http_req_failed",
+      "type": "line"
+    }
+  }
+}
