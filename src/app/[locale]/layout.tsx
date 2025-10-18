@@ -21,6 +21,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Event Staff",
   description: "Event Action for Staff",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default async function RootLayout({
