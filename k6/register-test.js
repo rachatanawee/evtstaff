@@ -8,7 +8,8 @@ import { textSummary } from "https://jslib.k6.io/k6-utils/1.6.0/index.js";
 
 
 // --- Configuration ---
-const BASE_URL = 'http://localhost:3000'; // ใช้ http สำหรับ development
+//const BASE_URL = 'http://localhost:3000'; // ใช้ http สำหรับ development
+const BASE_URL = 'https://evtstaff.vercel.app';
 const LOCALE = 'th'; // หรือ 'en' ตามที่ต้องการ
 
 // Login credentials
