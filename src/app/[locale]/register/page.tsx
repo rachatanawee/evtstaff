@@ -90,7 +90,7 @@ export default function RegisterPage() {
           </span>
         </h1>
 
-        <div className="w-full max-w-xs bg-gray-50 border border-gray-300 rounded-lg overflow-hidden shadow-inner mb-6 aspect-square flex items-center justify-center">
+        <div className="w-full max-w-xs bg-gray-50 border border-gray-300 rounded-lg overflow-hidden shadow-inner mb-6 flex items-center justify-center" style={{ height: '200px' }}>
           {isScanning ? (
             <Scanner
               onScan={handleScanSuccess}
