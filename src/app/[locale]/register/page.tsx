@@ -98,7 +98,7 @@ export default function RegisterPage() {
               sound={true}
             />
           ) : (
-            <img src="/hoya-logo-o.png" alt="Hoya Logo" className="w-48 h-48" />
+            <img src="/hoya-logo-o.png" alt="Hoya Logo" className="w-48 h-auto" />
           )}
         </div>
 
