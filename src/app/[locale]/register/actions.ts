@@ -32,7 +32,15 @@ export async function checkInParticipant(scannedData: string) {
       throw new Error('Scanned data is missing employee_id.')
     }
   } catch {
-    return { success: false, message: 'Invalid QR code data format.' }
+    // Try to extract employee_id from malformed JSON for error reporting
+    let employeeId = 'Unknown';
+    try {
+      const tempParse = JSON.parse(scannedData);
+      employeeId = tempParse?.employee_id || 'Unknown';
+    } catch {
+      employeeId = 'Unknown';
+    }
+    return { success: false, message: 'Invalid QR code data format.', employee_id: employeeId }
   }
 
   try {
@@ -78,17 +86,17 @@ export async function checkInParticipant(scannedData: string) {
           })
             */
           
-          const hours = String(registeredAt.getHours()+7).padStart(2, '0');
+          const hours = String(registeredAt.getHours()).padStart(2, '0');
           const minutes = String(registeredAt.getMinutes()).padStart(2, '0');
           const seconds = String(registeredAt.getSeconds()).padStart(2, '0');
 
 
           const time = `${hours}:${minutes}:${seconds}`;
-          return { success: false, message: `มี register แล้วเมื่อเวลา ${time}` }
+          return { success: false, message: `มี register แล้วเมื่อเวลา ${time}`, employee_id: parsedData.employee_id }
         } else {
           // This case means a duplicate error occurred, but select returned no data.
           // This could indicate an RLS issue or a race condition.
-          return { success: false, message: 'Registration failed due to an unexpected duplicate entry or permission issue.' };
+          return { success: false, message: 'Registration failed due to an unexpected duplicate entry or permission issue.', employee_id: parsedData.employee_id };
         }
       }
       // For other errors
@@ -106,6 +114,7 @@ export async function checkInParticipant(scannedData: string) {
     return {
       success: false,
       message: e instanceof Error ? e.message : 'An unknown error occurred.',
+      employee_id: parsedData.employee_id,
     }
   }
 }

@@ -19,6 +19,7 @@ interface ScanResult {
 export default function RegisterPage() {
   const [registeredData, setRegisteredData] = useState<RegisteredData | null>(null);
   const [error, setError] = useState('');
+  const [errorEmployeeId, setErrorEmployeeId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [session, setSession] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(true);
@@ -45,6 +46,7 @@ export default function RegisterPage() {
   const handleScanAgain = () => {
     setRegisteredData(null);
     setError('');
+    setErrorEmployeeId(null);
     setIsLoading(false);
     setIsScanning(true);
   }
@@ -70,8 +72,12 @@ export default function RegisterPage() {
         setRegisteredData(JSON.parse(scannedData));
         setSession(response.session || null);
         setError(''); // Explicitly clear error on success
+        setErrorEmployeeId(null); // Clear error employee ID on success
       } else {
         setError(response.message);
+        setErrorEmployeeId(response.employee_id || null); // Store employee ID for error display
+        setRegisteredData(null); // Clear registered data on error
+        setSession(null); // Clear session on error
       }
       setIsLoading(false);
     }
@@ -104,7 +110,11 @@ export default function RegisterPage() {
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg w-full mb-6 shadow-md">
+            {errorEmployeeId && (
+              <p className="text-lg mb-3">Emp. ID: <strong>{errorEmployeeId}</strong></p>
+            )}
             <p className="font-medium mb-3">Error: {error}</p>
+            
             <button
               onClick={handleScanAgain}
               className="w-full px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
